@@ -189,7 +189,7 @@ const Payment: React.FC = () => {
       </div>
 
       {successMessage && (
-        <div className="bg-white text-gray-900 rounded-md p-2 mt-1">
+        <div className="bg-white text-gray-900 rounded-md p-2 mt-1 w-[90%]">
           <h2 className="text-base font-semibold">Payment Successful!</h2>
           <p className="text-sm">{successMessage}</p>
           <p className="text-xs mt-2">

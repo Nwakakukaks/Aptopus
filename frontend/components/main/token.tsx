@@ -445,8 +445,8 @@ const DynamicMint = () => {
           <div className="flex flex-col gap-3 p-2 rounded-lg">
             <div className="flex space-x-3 items-center text-start justify-between">
               <div>
-                <p className="font-medium text-gray-400">Claimable Token</p>
-                <p className="text-xl font-bold text-gray-100 ">
+                <p className="font-medium text-sm text-gray-400">Claimable Token</p>
+                <p className="text-base font-bold text-gray-100 ">
                   {Math.min(userMintBalance, maxSupply - currentSupply)}
                   <span className=" font-medium text-gray-200 ml-1">{asset?.symbol}</span>
                 </p>
@@ -454,8 +454,8 @@ const DynamicMint = () => {
               </div>
 
               <div>
-                <p className="font-medium text-gray-400">Your Balance</p>
-                <p className="text-xl font-bold text-gray-100 ">
+                <p className="font-medium text-sm text-gray-400">Your Balance</p>
+                <p className="text-base font-bold text-gray-100 ">
                   {yourBalance}
                   <span className=" font-medium text-gray-200 ml-1">{asset?.symbol}</span>
                 </p>
@@ -463,8 +463,8 @@ const DynamicMint = () => {
               </div>
 
               <div>
-                <p className="font-medium text-gray-400">Total Supply</p>
-                <p className="text-xl font-bold text-gray-100 ">
+                <p className="font-medium text-sm text-gray-400">Total Supply</p>
+                <p className="text-base font-bold text-gray-100 ">
                   {currentSupply} / {maxSupply}
                 </p>
                 <p className="text-xs text-gray-400">Claimed / Max Supply</p>
@@ -479,7 +479,7 @@ const DynamicMint = () => {
               disabled={loading}
               className={`w-full ${
                 loading ? "bg-gradient-to-r from-red-500 to-white animate-pulse" : success ? "" : ""
-              } text-black text-lg font-bold py-1 px-4 rounded border border-black `}
+              } text-black text-base font-bold py-1 px-4 rounded border border-black `}
             >
               {loading ? "Claiming..." : success ? "✓ Claimed Successfully!" : "Claim Token"}
             </Button>
@@ -499,8 +499,8 @@ const DynamicMint = () => {
 
           {success && (
             <div className="bg-white text-gray-900 rounded-md p-2 mt-4">
-              <p className="text-sm">
-                Horray! Unlock creators exclusive contents here: <a className="text-red-500">{generatedUrl}</a>
+              <p className="text-sm text-wrap line-clamp-1">
+                Hurray! Unlock creators exclusive contents here: <a href={generatedUrl} className="text-red-500">{generatedUrl}</a>
               </p>
             </div>
           )}
