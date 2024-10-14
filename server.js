@@ -167,7 +167,17 @@ app.get("/test-youtube-api/:videoId", async (req, res) => {
   }
 });
 
-const shortUrls = {};
+const shortUrlsFile = path.join(__dirname, "chatbot", "shortUrls.json");
+
+
+let shortUrls = {};
+if (fs.existsSync(shortUrlsFile)) {
+  shortUrls = JSON.parse(fs.readFileSync(shortUrlsFile, "utf8"));
+}
+
+function saveShortUrls() {
+  fs.writeFileSync(shortUrlsFile, JSON.stringify(shortUrls, null, 2));
+}
 
 function generateShortCode() {
   return Math.random().toString(36).substr(2, 6);
@@ -182,6 +192,8 @@ app.post("/generate-short-url", async (req, res) => {
 
     const shortCode = generateShortCode();
     shortUrls[shortCode] = { videoId, address };
+
+    saveShortUrls();
 
     monitorLiveChat(videoId).catch((error) => {
       console.error("Failed to start monitoring:", error);
