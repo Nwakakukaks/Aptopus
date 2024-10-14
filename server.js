@@ -57,18 +57,40 @@ app.post("/send-message", async (req, res) => {
 });
 
 const validSuperchatsFile = path.join(__dirname, "chatbot", "validSuperchats.json");
-const validTransactionsFile = path.join(__dirname, "chatbot", "validTransactions.json");
 
-// Load valid superchats from file
+
 let validSuperchats = {};
 if (fs.existsSync(validSuperchatsFile)) {
   validSuperchats = JSON.parse(fs.readFileSync(validSuperchatsFile, "utf8"));
 }
 
-let validTransactions = [];
-if (fs.existsSync(validTransactionsFile)) {
-  validTransactions = JSON.parse(fs.readFileSync(validTransactionsFile, "utf8"));
-}
+const validTransactionsFile = path.join(__dirname, "chatbot", "validTransactions.json");
+
+const readValidTransactions = () => {
+  if (fs.existsSync(validTransactionsFile)) {
+    return JSON.parse(fs.readFileSync(validTransactionsFile, "utf8"));
+  }
+  return [];
+};
+
+
+app.get("/api/valid-transactions", (req, res) => {
+  const validTransactions = readValidTransactions();
+  res.json(validTransactions);
+});
+
+app.get("/api/valid-transactions/:hash", (req, res) => {
+  const { hash } = req.params;
+  const validTransactions = readValidTransactions();
+  const transaction = validTransactions.find(tx => tx.transactionHash === hash);
+  
+  if (transaction) {
+    res.json(transaction);
+  } else {
+    res.status(404).json({ error: "Transaction not found" });
+  }
+});
+
 
 app.post("/simulate-payment", async (req, res) => {
   const { message, amount, videoId, address, hash } = req.body;
