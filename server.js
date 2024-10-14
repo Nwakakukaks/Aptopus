@@ -15,7 +15,11 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 3001;
 
-app.use(express.json()); //  parse JSON in request body
+app.use(express.json()); 
+
+app.use(cors({
+  origin: 'https://aptopus.vercel.app' 
+}));
 
 const youtube = google.youtube("v3");
 const oauth2Client = new google.auth.OAuth2(
@@ -33,8 +37,6 @@ app.use(express.static(path.join(__dirname, "dist")));
 
 // Include route handlers from webapp/index.js
 const { postToYouTubeChat, getLiveChatId } = require("./chatbot/index");
-
-app.use(cors());
 
 // app.get("*", (req, res) => {
 //   res.sendFile(path.join(__dirname, "index.html"));
