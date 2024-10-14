@@ -74,12 +74,12 @@ const readValidTransactions = () => {
 };
 
 
-app.get("/api/valid-transactions", (req, res) => {
+app.get("/valid-transactions", (req, res) => {
   const validTransactions = readValidTransactions();
   res.json(validTransactions);
 });
 
-app.get("/api/valid-transactions/:hash", (req, res) => {
+app.get("/valid-transactions/:hash", (req, res) => {
   const { hash } = req.params;
   const validTransactions = readValidTransactions();
   const transaction = validTransactions.find(tx => tx.transactionHash === hash);
