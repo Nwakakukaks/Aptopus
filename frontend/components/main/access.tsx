@@ -165,7 +165,7 @@ const Access: React.FC = () => {
   };
 
   return (
-    <div className="h-[75vh] py-16 flex justify-center items-center">
+    <div className="h-[75vh] flex justify-center items-center">
       <Card className="w-full max-w-4xl mx-auto bg-transparent border-2 border-gray-400 ">
         <CardHeader>
           <CardTitle className="text-2xl text-slate-50 font-bold text-center mb-2">Access Exclusive Contents</CardTitle>
