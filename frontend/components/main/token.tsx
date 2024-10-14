@@ -22,8 +22,9 @@ const DynamicMint = () => {
   const location = useLocation();
   const [videoId] = useState(new URLSearchParams(window.location.search).get("vid") || "");
   const [address] = useState(new URLSearchParams(window.location.search).get("lnaddr") || "");
+  const { account, signAndSubmitTransaction } = useWallet();
 
-  const fas = useGetAssetMetadata();
+  const fas = useGetAssetMetadata(address);
 
   // Get the last asset_type
   const lastAssetType = useMemo(() => {
@@ -48,7 +49,7 @@ const DynamicMint = () => {
   });
 
   const queryClient = useQueryClient();
-  const { account, signAndSubmitTransaction } = useWallet();
+
   const aptosWallet = useWallet();
 
   const [tokenHash, setTokenHash] = useState<string>("");
@@ -211,7 +212,6 @@ const DynamicMint = () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ videoId, address: address }),
-          
         });
         const data = await response.json();
 
@@ -500,7 +500,10 @@ const DynamicMint = () => {
           {success && (
             <div className="bg-white text-gray-900 rounded-md p-2 mt-4">
               <p className="text-sm text-wrap line-clamp-1">
-                Hurray! Unlock creators exclusive contents here: <a href={generatedUrl} className="text-red-500">{generatedUrl}</a>
+                Hurray! Unlock creators exclusive contents here:{" "}
+                <a href={generatedUrl} className="text-red-500">
+                  {generatedUrl}
+                </a>
               </p>
             </div>
           )}

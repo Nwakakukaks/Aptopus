@@ -11,14 +11,14 @@ import { getRegistry } from "@/view-functions/getRegistry";
  * therefore it is not recommended to use it in production
  *
  */
-export function useGetAssetMetadata() {
+export function useGetAssetMetadata(address: string) {
   const [fas, setFAs] = useState<GetFungibleAssetMetadataResponse>([]);
 
   useEffect(() => {
     async function fetchData() {
       try {
         // fetch the contract registry address
-        const registry = await getRegistry();
+        const registry = await getRegistry({address: address});
         console.log("Registry:", registry);
 
         // fetch fungible assets objects created under that contract registry address
