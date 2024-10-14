@@ -419,7 +419,9 @@ const DynamicMint = () => {
       ) : (
         <>
           {!account?.address ? (
-            <WalletSelector />
+            <div className=" flex justify-center items-center">
+              <WalletSelector />
+            </div>
           ) : (
             <div className="space-y-6 p-6">
               <div className=" flex  items-center justify-center rounded-sm mt-1">

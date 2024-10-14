@@ -168,7 +168,9 @@ const Access: React.FC = () => {
   return (
     <div className="h-[75vh] flex justify-center items-center">
       {!account?.address ? (
-        <WalletSelector />
+        <div className=" flex justify-center items-center">
+          <WalletSelector />
+        </div>
       ) : (
         <Card className="w-full max-w-4xl mx-auto bg-transparent border-2 border-gray-400 ">
           <CardHeader>
