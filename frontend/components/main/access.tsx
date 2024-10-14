@@ -3,7 +3,7 @@ import { useGetAssetData } from "@/hooks/useGetAssetData";
 import { useGetAssetMetadata } from "@/hooks/useGetAssetMetadata";
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import { toast } from "@/components/ui/use-toast";
-import { getMintLimit, getTokenBalance } from "@/view-functions/getTokenBalance";
+import { getTokenBalance } from "@/view-functions/getTokenBalance";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
