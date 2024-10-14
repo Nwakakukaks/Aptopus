@@ -17,6 +17,7 @@ import { useGetAssetMetadata } from "@/hooks/useGetAssetMetadata";
 // import { toast } from "@/hooks/use-toast";
 import { useLocation } from "react-router-dom";
 import { toast } from "../ui/use-toast";
+import { WalletSelector } from "../general/WalletSelector";
 
 const DynamicMint = () => {
   const location = useLocation();
@@ -416,75 +417,79 @@ const DynamicMint = () => {
           </>
         </div>
       ) : (
-        <div className="space-y-6 p-6">
-          <div className=" flex  items-center justify-center rounded-sm mt-1">
-            <img
-              src={asset ? asset.icon_uri : "/icons/placeh.svg"}
-              alt={`icon`}
-              className=" max-w-24 h-auto max-h-40 object-contain mb-4 rounded-full overflow-hidden"
-            />
-          </div>
-
-          <div className="flex flex-col gap-6">
-            <div>
-              <Label className="text-gray-100 font-medium text-lg" htmlFor="quantity">
-                Quantity to Mint
-              </Label>
-              <Input
-                id="quantity"
-                name="quantity"
-                type="number"
-                value={formData.quantity}
-                onChange={handleInputChange}
-                placeholder="Enter quantity to mint"
-                className="bg-transparent text-white rounded-none mt-1"
-              />
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-3 p-2 rounded-lg">
-            <div className="flex space-x-3 items-center text-start justify-between">
-              <div>
-                <p className="font-medium text-sm text-gray-400">Claimable Token</p>
-                <p className="text-base font-semibold text-gray-100 ">
-                  {Math.min(userMintBalance, maxSupply - currentSupply)}
-                  <span className=" font-medium text-gray-200 ml-1">{asset?.symbol}</span>
-                </p>
-                <p className="text-xs text-gray-400">Available to claim</p>
+        <>
+          {!account?.address ? (
+            <WalletSelector />
+          ) : (
+            <div className="space-y-6 p-6">
+              <div className=" flex  items-center justify-center rounded-sm mt-1">
+                <img
+                  src={asset ? asset.icon_uri : "/icons/placeh.svg"}
+                  alt={`icon`}
+                  className=" max-w-24 h-auto max-h-40 object-contain mb-4 rounded-full overflow-hidden"
+                />
               </div>
 
-              <div>
-                <p className="font-medium text-sm text-gray-400">Your Balance</p>
-                <p className="text-base font-semibold text-gray-100 ">
-                  {yourBalance}
-                  <span className=" font-medium text-gray-200 ml-1">{asset?.symbol}</span>
-                </p>
-                <p className="text-xs text-gray-400">Current Holdings</p>
+              <div className="flex flex-col gap-6">
+                <div>
+                  <Label className="text-gray-100 font-medium text-lg" htmlFor="quantity">
+                    Quantity to Mint
+                  </Label>
+                  <Input
+                    id="quantity"
+                    name="quantity"
+                    type="number"
+                    value={formData.quantity}
+                    onChange={handleInputChange}
+                    placeholder="Enter quantity to mint"
+                    className="bg-transparent text-white rounded-none mt-1"
+                  />
+                </div>
               </div>
 
-              <div>
-                <p className="font-medium text-sm text-gray-400">Total Supply</p>
-                <p className="text-base font-semibold text-gray-100 ">
-                  {currentSupply} / {maxSupply}
-                </p>
-                <p className="text-xs text-gray-400">Claimed / Max Supply</p>
+              <div className="flex flex-col gap-3 p-2 rounded-lg">
+                <div className="flex space-x-3 items-center text-start justify-between">
+                  <div>
+                    <p className="font-medium text-sm text-gray-400">Claimable Token</p>
+                    <p className="text-base font-semibold text-gray-100 ">
+                      {Math.min(userMintBalance, maxSupply - currentSupply)}
+                      <span className=" font-medium text-gray-200 ml-1">{asset?.symbol}</span>
+                    </p>
+                    <p className="text-xs text-gray-400">Available to claim</p>
+                  </div>
+
+                  <div>
+                    <p className="font-medium text-sm text-gray-400">Your Balance</p>
+                    <p className="text-base font-semibold text-gray-100 ">
+                      {yourBalance}
+                      <span className=" font-medium text-gray-200 ml-1">{asset?.symbol}</span>
+                    </p>
+                    <p className="text-xs text-gray-400">Current Holdings</p>
+                  </div>
+
+                  <div>
+                    <p className="font-medium text-sm text-gray-400">Total Supply</p>
+                    <p className="text-base font-semibold text-gray-100 ">
+                      {currentSupply} / {maxSupply}
+                    </p>
+                    <p className="text-xs text-gray-400">Claimed / Max Supply</p>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
 
-          <div className="flex flex-col space-y-4">
-            <Button
-              variant={"outline"}
-              onClick={mintFA}
-              disabled={loading}
-              className={`w-full ${
-                loading ? "bg-gradient-to-r from-red-500 to-white animate-pulse" : success ? "" : ""
-              } text-black text-base font-bold py-1 px-4 rounded border border-black `}
-            >
-              {loading ? "Claiming..." : success ? "✓ Claimed Successfully!" : "Claim Token"}
-            </Button>
+              <div className="flex flex-col space-y-4">
+                <Button
+                  variant={"outline"}
+                  onClick={mintFA}
+                  disabled={loading}
+                  className={`w-full ${
+                    loading ? "bg-gradient-to-r from-red-500 to-white animate-pulse" : success ? "" : ""
+                  } text-black text-base font-bold py-1 px-4 rounded border border-black `}
+                >
+                  {loading ? "Claiming..." : success ? "✓ Claimed Successfully!" : "Claim Token"}
+                </Button>
 
-            {/* <div className="flex justify-between items-center text-gray-200">
+                {/* <div className="flex justify-between items-center text-gray-200">
               <span>Token Address:</span>
               <a
                 className="text-red-500 hover:underline truncate max-w-[200px]"
@@ -495,19 +500,21 @@ const DynamicMint = () => {
                 {asset?.asset_type}
               </a>
             </div> */}
-          </div>
+              </div>
 
-          {success && (
-            <div className="bg-white text-gray-900 rounded-md p-2 mt-4">
-              <p className="text-sm text-wrap line-clamp-1">
-                Hurray! Unlock creators exclusive contents here:{" "}
-                <a href={generatedUrl} className="text-red-500">
-                  {generatedUrl}
-                </a>
-              </p>
+              {success && (
+                <div className="bg-white text-gray-900 rounded-md p-2 mt-4">
+                  <p className="text-sm text-wrap line-clamp-1">
+                    Hurray! Unlock creators exclusive contents here:{" "}
+                    <a href={generatedUrl} className="text-red-500">
+                      {generatedUrl}
+                    </a>
+                  </p>
+                </div>
+              )}
             </div>
           )}
-        </div>
+        </>
       )}
     </div>
   );

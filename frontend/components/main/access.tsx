@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, Lock, Unlock } from "lucide-react";
+import { WalletSelector } from "../general/WalletSelector";
 
 interface Platform {
   name: string;
@@ -40,7 +41,6 @@ const PlatformButton: React.FC<PlatformButtonProps> = ({ platform, onClick, isLo
   </Button>
 );
 
-
 interface AssetData {
   asset: {
     asset_type: string;
@@ -52,7 +52,8 @@ interface BalanceData {
 }
 
 const Access: React.FC = () => {
-  const fas = useGetAssetMetadata();
+  const [address] = useState(new URLSearchParams(window.location.search).get("lnaddr") || "");
+  const fas = useGetAssetMetadata(address);
   const { account, signMessageAndVerify } = useWallet();
   const [loadingStates, setLoadingStates] = useState<Record<string, string | null>>({});
   const [signedPlatform, setSignedPlatform] = useState<Platform | null>(null);
@@ -166,27 +167,33 @@ const Access: React.FC = () => {
 
   return (
     <div className="h-[75vh] flex justify-center items-center">
-      <Card className="w-full max-w-4xl mx-auto bg-transparent border-2 border-gray-400 ">
-        <CardHeader>
-          <CardTitle className="text-2xl text-slate-50 font-bold text-center mb-2">Access Exclusive Contents</CardTitle>
-          <CardDescription className="text-center text-base ">
-            Connect your wallet to unlock premium content using your membership token
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {platforms.map((platform) => (
-              <PlatformButton
-                key={platform.name}
-                platform={platform}
-                onClick={() => handleAccess(platform)}
-                isLoading={!!loadingStates[platform.name]}
-                loadingState={loadingStates[platform.name]}
-              />
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+      {!account?.address ? (
+        <WalletSelector />
+      ) : (
+        <Card className="w-full max-w-4xl mx-auto bg-transparent border-2 border-gray-400 ">
+          <CardHeader>
+            <CardTitle className="text-2xl text-slate-50 font-bold text-center mb-2">
+              Access Exclusive Contents
+            </CardTitle>
+            <CardDescription className="text-center text-base ">
+              Connect your wallet to unlock premium content using your membership token
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {platforms.map((platform) => (
+                <PlatformButton
+                  key={platform.name}
+                  platform={platform}
+                  onClick={() => handleAccess(platform)}
+                  isLoading={!!loadingStates[platform.name]}
+                  loadingState={loadingStates[platform.name]}
+                />
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 };
