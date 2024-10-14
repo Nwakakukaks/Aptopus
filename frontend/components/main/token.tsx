@@ -506,7 +506,7 @@ const DynamicMint = () => {
 
               {success && (
                 <div className="bg-white text-gray-900 rounded-md p-2 mt-4">
-                  <p className="text-sm text-wrap line-clamp-1">
+                  <p className="text-sm text-wrap line-clamp-2">
                     Hurray! Unlock creators exclusive contents here:{" "}
                     <a href={generatedUrl} className="text-red-500">
                       {generatedUrl}
