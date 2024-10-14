@@ -45,7 +45,7 @@ const CreatorLinkGenerator: React.FC = () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ videoId, address: aptosAddress }),
-          credentials: 'include'
+          
         });
         const data = await response.json();
 

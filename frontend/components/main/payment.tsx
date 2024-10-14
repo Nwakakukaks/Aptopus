@@ -32,7 +32,7 @@ const Payment: React.FC = () => {
             videoId,
             address: new URLSearchParams(window.location.search).get("lnaddr"),
           }),
-          credentials: 'include'
+          
         });
         const data = await response.json();
 
@@ -96,7 +96,7 @@ const Payment: React.FC = () => {
             address,
             hash,
           }),
-          credentials: 'include'
+          
         });
 
         const data = await response.json();
@@ -130,7 +130,7 @@ const Payment: React.FC = () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ videoId, address: address }),
-          credentials: 'include'
+          
         });
         const data = await response.json();
 
