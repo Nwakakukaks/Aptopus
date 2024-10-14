@@ -5,7 +5,6 @@ import { aptosClient } from "@/utils/aptosClient";
 import { convertAmountFromOnChainToHumanReadable } from "@/utils/helpers";
 // Internal constants
 import { getUserMintBalance } from "@/view-functions/getUserMintBalance";
-import { FA_ADDRESS } from "@/constants";
 import { getMintEnabled } from "@/view-functions/getMintEnabled";
 
 export interface FungibleAsset {

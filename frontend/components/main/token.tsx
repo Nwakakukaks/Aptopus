@@ -20,8 +20,8 @@ import { toast } from "../ui/use-toast";
 
 const DynamicMint = () => {
   const location = useLocation();
-  const [videoId, setVideoId] = useState(new URLSearchParams(window.location.search).get("vid") || "");
-  const [address, setAddress] = useState(new URLSearchParams(window.location.search).get("lnaddr") || "");
+  const [videoId] = useState(new URLSearchParams(window.location.search).get("vid") || "");
+  const [address] = useState(new URLSearchParams(window.location.search).get("lnaddr") || "");
 
   const fas = useGetAssetMetadata();
 
@@ -55,7 +55,7 @@ const DynamicMint = () => {
   let FA_ADDRESS = lastAssetType;
 
   const [showAdvanced, setShowAdvanced] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -63,9 +63,12 @@ const DynamicMint = () => {
   const [image, setImage] = useState<File | undefined>();
   const { data } = useGetAssetData(FA_ADDRESS);
   const [generatedUrl, setGeneratedUrl] = useState("");
-  const [isUploading, setIsUploading] = useState(false);
+  const [isuploading, setIsUploading] = useState(false);
 
   const { asset, userMintBalance = 0, yourBalance = 0, maxSupply = 0, currentSupply = 0 } = data ?? {};
+
+  if (isuploading || error) {
+  }
 
   const handleInputChange = (e: any) => {
     const { name, value } = e.target;
@@ -190,7 +193,7 @@ const DynamicMint = () => {
     queryClient.invalidateQueries();
 
     if (claim.success) {
-      await generateAccessUrl()
+      await generateAccessUrl();
       toast({
         title: "Success",
         description: `Token claimed successfully, hash: ${claim.hash}`,
@@ -202,7 +205,7 @@ const DynamicMint = () => {
   const generateAccessUrl = async () => {
     if (videoId && address) {
       try {
-        const response = await fetch("https://aptopus.vercel.app//generate-short-url", {
+        const response = await fetch("https://aptopus-backend.vercel.app/generate-short-url", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

@@ -40,9 +40,6 @@ const PlatformButton: React.FC<PlatformButtonProps> = ({ platform, onClick, isLo
   </Button>
 );
 
-interface AssetMetadata {
-  asset_type: string;
-}
 
 interface AssetData {
   asset: {

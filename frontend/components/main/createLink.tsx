@@ -39,7 +39,7 @@ const CreatorLinkGenerator: React.FC = () => {
     const videoId = extractVideoId(videoUrl);
     if (videoId && aptosAddress) {
       try {
-        const response = await fetch("https://aptopus.vercel.app/generate-short-url", {
+        const response = await fetch("https://aptopus-backend.vercel.app/generate-short-url", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

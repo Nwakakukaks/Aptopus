@@ -1,6 +1,6 @@
 import { AccountAddress } from "@aptos-labs/ts-sdk";
 import { aptosClient } from "@/utils/aptosClient";
-import { T_MINTING_MODULE, NFT_MODULE_ADDRESS } from "@/constants";
+import { NFT_MODULE_ADDRESS, T_MINTING_MODULE } from "@/constants";
 
 type GetMintEnabledArguments = {
   fa_address: string;

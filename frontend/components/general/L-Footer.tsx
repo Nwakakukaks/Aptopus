@@ -1,8 +1,4 @@
-import { useLocation } from "react-router-dom";
-
 export function LFooter() {
-  const location = useLocation();
-
   return (
     <>
       <div className="flex justify-between items-start my-6 px-20 ">

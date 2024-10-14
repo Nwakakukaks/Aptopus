@@ -1,13 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Button } from "../ui/button";
-import { useNavigate } from "react-router-dom";
 
 export const Features = () => {
-  const navigate = useNavigate();
 
- const handleNavigate = () => {
-  navigate('/dashboard')
-  }
 
   return (
     <>

@@ -8,22 +8,22 @@ import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import { useQueryClient } from "@tanstack/react-query";
 
 const Payment: React.FC = () => {
-  const { connected, signAndSubmitTransaction } = useWallet();
+  const { signAndSubmitTransaction } = useWallet();
   const queryClient = useQueryClient();
   const [message, setMessage] = useState("");
   const [amount, setAmount] = useState("");
   const [generatedUrl, setGeneratedUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
-  const [videoId, setVideoId] = useState(new URLSearchParams(window.location.search).get("vid") || "");
-  const [address, setAddress] = useState(new URLSearchParams(window.location.search).get("lnaddr") || "");
+  const [videoId] = useState(new URLSearchParams(window.location.search).get("vid") || "");
+  const [address] = useState(new URLSearchParams(window.location.search).get("lnaddr") || "");
 
   const sendSuperchat = async () => {
     if (message && amount) {
       setLoading(true);
 
       try {
-        const response = await fetch("https://aptopus.vercel.app//send-message", {
+        const response = await fetch("https://aptopus-backend.vercel.app/send-message", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -85,7 +85,7 @@ const Payment: React.FC = () => {
 
         const hash = executedTransaction.hash;
         // Simulate the payment
-        const response = await fetch("https://aptopus.vercel.app//simulate-payment", {
+        const response = await fetch("https://aptopus-backend.vercel.app/simulate-payment", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -122,7 +122,7 @@ const Payment: React.FC = () => {
   const generateClaimUrl = async () => {
     if (videoId && address) {
       try {
-        const response = await fetch("https://aptopus.vercel.app//generate-short-url", {
+        const response = await fetch("https://aptopus-backend.vercel.app/generate-short-url", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

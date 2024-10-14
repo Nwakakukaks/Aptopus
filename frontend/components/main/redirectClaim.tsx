@@ -11,7 +11,7 @@ const RedirectToClaim: React.FC = () => {
       const pathParts = window.location.pathname.split("/");
       const shortCode = pathParts[pathParts.length - 1];
 
-      const response = await fetch(`https://aptopus.vercel.app//c/${shortCode}`);
+      const response = await fetch(`https://aptopus-backend.vercel.app/c/${shortCode}`);
       if (!response.ok) {
         const text = await response.text();
         throw new Error(text);
@@ -48,7 +48,7 @@ const RedirectToClaim: React.FC = () => {
     <div className="flex flex-col items-center justify-center min-h-screen p-4">
       {error ? <div className="text-red-500 mb-4">{error}</div> : null}
 
-      <p>Redirecting to claim page...</p>
+     { isLoading && <p>Redirecting to claim page...</p>}
     </div>
   );
 };
