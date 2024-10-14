@@ -176,7 +176,7 @@ const Access: React.FC = () => {
           <WalletSelector />
         </div>
       ) : (
-        <Card className="w-full max-w-4xl mx-auto bg-transparent border-2 border-gray-400 my-12">
+        <Card className="w-full max-w-4xl mx-auto bg-transparent border-2 border-gray-400 my-24">
           <CardHeader>
             <CardTitle className="text-xl text-slate-50 font-bold text-center mb-2">
               Access Exclusive Contents
