@@ -59,6 +59,7 @@ const Live: React.FC = () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ videoId }),
+          credentials: 'include'
         });
         const data = await response.json();
         if (data.error) {

@@ -211,6 +211,7 @@ const DynamicMint = () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ videoId, address: address }),
+          credentials: 'include'
         });
         const data = await response.json();
 
