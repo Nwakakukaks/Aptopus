@@ -325,6 +325,10 @@ async function saveShortUrls(shortUrls) {
   }
 }
 
+function generateShortCode() {
+  return Math.random().toString(36).substr(2, 6);
+}
+
 app.post("/generate-short-url", async (req, res) => {
   const { videoId, address } = req.body;
   console.log("Received request:", { videoId, address });
