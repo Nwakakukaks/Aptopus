@@ -1,3 +1,4 @@
+import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import React, { useEffect, useState } from "react";
 
 interface Transaction {
@@ -18,16 +19,22 @@ const shortenString = (str: string, maxLength: number = 10): string => {
 const Transactions: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [dataDisplay, setDataDisplay] = useState<Transaction[]>([]);
+  const { account } = useWallet();
+  
+  const address = account?.address;
 
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
-        const response = await fetch("https://aptopus-backend.vercel.app/valid-transactions"); // Adjust the URL if needed
+        const response = await fetch("https://aptopus-backend.vercel.app/api/valid-transactions"); // Adjust the URL if needed
         if (!response.ok) {
           throw new Error("Failed to fetch transactions");
         }
-        const data = await response.json();
-        setDataDisplay(data);
+        const data: Transaction[] = await response.json();
+        
+        // Filter transactions by address
+        const filteredData = data.filter(transaction => transaction.address === address);
+        setDataDisplay(filteredData);
       } catch (error) {
         console.error("Error fetching transactions:", error);
       } finally {
@@ -35,8 +42,10 @@ const Transactions: React.FC = () => {
       }
     };
 
-    fetchTransactions();
-  }, []);
+    if (address) {
+      fetchTransactions();
+    }
+  }, [address]); // Fetch when address changes
 
   return (
     <div className="analytics-dashboard mt-6 p-4 rounded-sm mx-auto">
@@ -44,9 +53,7 @@ const Transactions: React.FC = () => {
 
       {loading && <div className="loading-indicator text-center mt-4">Loading...</div>}
 
-      {!loading && dataDisplay.length === 0 && (
-        <div className="no-data text-center mt-4">No transactions found.</div>
-      )}
+      {!loading && dataDisplay.length === 0 && <div className="no-data text-center mt-4">No transactions found.</div>}
 
       {!loading && dataDisplay.length > 0 && (
         <table className="min-w-full mt-4 border-2 border-gray-700 text-gray-200 overflow-y-auto">

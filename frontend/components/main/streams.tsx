@@ -1,3 +1,4 @@
+import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import React, { useEffect, useState } from "react";
 import DisburseRewards from "./disbursereward";
 
@@ -5,7 +6,7 @@ interface Transaction {
   amount: string;
   videoId: string;
   timestamp: string;
-  address: string; 
+  address: string;
   transactionHash: string;
   message: string;
 }
@@ -24,16 +25,23 @@ const groupTransactionsByVideoId = (transactions: Transaction[]) => {
 const Streams: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [groupedStreams, setGroupedStreams] = useState<Record<string, Transaction[]>>({});
+  const { account } = useWallet();
+
+  const address = account?.address;
 
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
-        const response = await fetch("https://aptopus-backend.vercel.app/valid-transactions"); // Adjust the URL if needed
+        const response = await fetch("https://aptopus-backend.vercel.app/api/valid-transactions"); // Adjust the URL if needed
         if (!response.ok) {
           throw new Error("Failed to fetch transactions");
         }
         const data: Transaction[] = await response.json();
-        const groupedData = groupTransactionsByVideoId(data);
+        
+        // Filter transactions by address
+        const filteredData = data.filter(transaction => transaction.address === address);
+        
+        const groupedData = groupTransactionsByVideoId(filteredData);
         setGroupedStreams(groupedData);
       } catch (error) {
         console.error("Error fetching transactions:", error);
@@ -42,8 +50,10 @@ const Streams: React.FC = () => {
       }
     };
 
-    fetchTransactions();
-  }, []);
+    if (address) {
+      fetchTransactions();
+    }
+  }, [address]); 
 
   return (
     <div className="mt-6 text-gray-100 p-4 rounded shadow overflow-y-auto h-[100vh]">
@@ -57,13 +67,11 @@ const Streams: React.FC = () => {
 
       {!loading && Object.keys(groupedStreams).length > 0 && (
         <div className="mt-4">
-          {Object.entries(groupedStreams).map(([videoId, transactions]) => {
-            return (
-              <div key={videoId} className="mb-4">
-                <DisburseRewards videoId={videoId} transactions={transactions} />
-              </div>
-            );
-          })}
+          {Object.entries(groupedStreams).map(([videoId, transactions]) => (
+            <div key={videoId} className="mb-4">
+              <DisburseRewards videoId={videoId} transactions={transactions} />
+            </div>
+          ))}
         </div>
       )}
     </div>
