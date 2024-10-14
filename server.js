@@ -275,7 +275,7 @@ app.post("/generate-short-url", async (req, res) => {
   console.log("Received request:", { videoId, address });
 
   try {
-    const liveChatId = await getLiveChatId(videoId);
+    // const liveChatId = await getLiveChatId(videoId);
 
     const shortCode = generateShortCode();
     const shortUrls = await getShortUrls();
