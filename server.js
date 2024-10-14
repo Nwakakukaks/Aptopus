@@ -17,9 +17,9 @@ const port = process.env.PORT || 3001;
 
 app.use(express.json()); 
 
-app.use(cors({
-  origin: 'https://aptopus.vercel.app' 
-}));
+// app.use(cors({
+//   origin: 'https://aptopus.vercel.app' 
+// }));
 
 const youtube = google.youtube("v3");
 const oauth2Client = new google.auth.OAuth2(
