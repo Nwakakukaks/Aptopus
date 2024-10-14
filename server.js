@@ -206,7 +206,7 @@ app.get("/s/:shortCode", async (req, res) => {
   }
 
   try {
-    const paymentUrl = `http://localhost:5173/payment?vid=${urlData.videoId}&lnaddr=${urlData.address}`;
+    const paymentUrl = `https://aptopus.vercel.app/payment?vid=${urlData.videoId}&lnaddr=${urlData.address}`;
     console.log("Generated payment URL:", paymentUrl);
 
     return res.status(200).json({
@@ -237,7 +237,7 @@ app.get("/c/:shortCode", async (req, res) => {
   }
 
   try {
-    const claimUrl = `http://localhost:5173/claim?vid=${urlData.videoId}&lnaddr=${urlData.address}`;
+    const claimUrl = `https://aptopus.vercel.app/claim?vid=${urlData.videoId}&lnaddr=${urlData.address}`;
     console.log("Generated claim URL:", claimUrl);
 
     return res.status(200).json({
@@ -268,7 +268,7 @@ app.get("/a/:shortCode", async (req, res) => {
   }
 
   try {
-    const accessUrl = `http://localhost:5173/access?vid=${urlData.videoId}&lnaddr=${urlData.address}`;
+    const accessUrl = `https://aptopus.vercel.app/access?vid=${urlData.videoId}&lnaddr=${urlData.address}`;
     console.log("Generated access URL:", accessUrl);
 
     return res.status(200).json({
