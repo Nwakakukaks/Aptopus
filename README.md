@@ -22,7 +22,7 @@ Real-Time Display: The bot posts messages to the live chat, visible to everyone.
 
 livedemo: [Aptopus](https://Aptopus.vercel.app) 
 
-***For the best experience please use youtube in firefox as sometimes the popup doesnt open in other browsers (like brave).***
+***For the best experience please use youtube in firefox as sometimes the popup doesnt open in other browsers (like brave) Or alternatively please disable blocking of popups temporarily in browser (chrome, brave, firefox etc)***
 
 ## What it does / how it works
 
