@@ -32,7 +32,7 @@ const Streams: React.FC = () => {
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
-        const response = await fetch("https://aptopus-backend.vercel.app/api/valid-transactions"); // Adjust the URL if needed
+        const response = await fetch("https://aptopus-backend.vercel.app/valid-transactions"); // Adjust the URL if needed
         if (!response.ok) {
           throw new Error("Failed to fetch transactions");
         }
