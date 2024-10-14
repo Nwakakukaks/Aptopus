@@ -1,6 +1,7 @@
 const dotenv = require("dotenv");
 dotenv.config();
 
+const { KVNamespace } = require('@cloudflare/workers-types');
 const express = require("express");
 const bodyParser = require("body-parser");
 const axios = require("axios");
@@ -58,20 +59,33 @@ app.post("/send-message", async (req, res) => {
 
 const validSuperchatsFile = path.join(__dirname, "chatbot", "validSuperchats.json");
 
-
 let validSuperchats = {};
 if (fs.existsSync(validSuperchatsFile)) {
-  validSuperchats = JSON.parse(fs.readFileSync(validSuperchatsFile, "utf8"));
+  try {
+    const fileContent = fs.readFileSync(validSuperchatsFile, "utf8");
+    validSuperchats = fileContent ? JSON.parse(fileContent) : {};
+  } catch (error) {
+    console.error("Error parsing validSuperchats.json:", error);
+    validSuperchats = {};
+  }
 }
 
 const validTransactionsFile = path.join(__dirname, "chatbot", "validTransactions.json");
 
 const readValidTransactions = () => {
   if (fs.existsSync(validTransactionsFile)) {
-    return JSON.parse(fs.readFileSync(validTransactionsFile, "utf8"));
+    try {
+      const fileContent = fs.readFileSync(validTransactionsFile, "utf8");
+      return fileContent ? JSON.parse(fileContent) : [];
+    } catch (error) {
+      console.error("Error parsing validTransactions.json:", error);
+      return [];
+    }
   }
   return [];
 };
+
+let validTransactions = readValidTransactions();
 
 
 app.get("/valid-transactions", (req, res) => {
@@ -81,7 +95,7 @@ app.get("/valid-transactions", (req, res) => {
 
 app.get("/valid-transactions/:hash", (req, res) => {
   const { hash } = req.params;
-  const validTransactions = readValidTransactions();
+  let validTransactions = readValidTransactions();
   const transaction = validTransactions.find(tx => tx.transactionHash === hash);
   
   if (transaction) {
@@ -189,20 +203,85 @@ app.get("/test-youtube-api/:videoId", async (req, res) => {
   }
 });
 
-const shortUrlsFile = path.join(__dirname, "chatbot", "shortUrls.json");
+// const shortUrlsFile = path.join(__dirname, "chatbot", "shortUrls.json");
 
 
-let shortUrls = {};
-if (fs.existsSync(shortUrlsFile)) {
-  shortUrls = JSON.parse(fs.readFileSync(shortUrlsFile, "utf8"));
+// let shortUrls = {};
+// if (fs.existsSync(shortUrlsFile)) {
+//   shortUrls = JSON.parse(fs.readFileSync(shortUrlsFile, "utf8"));
+// }
+
+// function saveShortUrls() {
+//   fs.writeFileSync(shortUrlsFile, JSON.stringify(shortUrls, null, 2));
+// }
+
+// function generateShortCode() {
+//   return Math.random().toString(36).substr(2, 6);
+// }
+
+// app.post("/generate-short-url", async (req, res) => {
+//   const { videoId, address } = req.body;
+//   console.log("Received request:", { videoId, address });
+
+//   try {
+//     const liveChatId = await getLiveChatId(videoId);
+
+//     const shortCode = generateShortCode();
+//     shortUrls[shortCode] = { videoId, address };
+
+//     saveShortUrls();
+
+//     monitorLiveChat(videoId).catch((error) => {
+//       console.error("Failed to start monitoring:", error);
+//     });
+
+//     res.json({ shortCode });
+//   } catch (error) {
+//     console.error("Error generating short URL:", error);
+//     res.status(500).json({ error: error.message });
+//   }
+// });
+
+// app.get("/s/:shortCode", async (req, res) => {
+//   const { shortCode } = req.params;
+
+//   const urlData = shortUrls[shortCode];
+
+//   if (!urlData) {
+//     console.log("Short URL not found for code:", shortCode);
+//     return res.status(404).json({
+//       error: "Short URL not found",
+//       code: "NOT_FOUND",
+//     });
+//   }
+
+//   try {
+//     const paymentUrl = `https://aptopus.vercel.app/payment?vid=${urlData.videoId}&lnaddr=${urlData.address}`;
+//     console.log("Generated payment URL:", paymentUrl);
+
+//     return res.status(200).json({
+//       url: paymentUrl,
+//       success: true,
+//     });
+//   } catch (error) {
+//     console.error("Error generating payment URL:", error);
+//     return res.status(500).json({
+//       error: "Failed to generate payment URL",
+//       code: "SERVER_ERROR",
+//     });
+//   }
+// });
+
+// Initialize Cloudflare KV
+const KV = new KVNamespace('9e80bc6191f545b5bc67096ae361f275');
+
+// Replace the file-based shortUrls with KV operations
+async function getShortUrls() {
+  return JSON.parse(await KV.get('shortUrls') || '{}');
 }
 
-function saveShortUrls() {
-  fs.writeFileSync(shortUrlsFile, JSON.stringify(shortUrls, null, 2));
-}
-
-function generateShortCode() {
-  return Math.random().toString(36).substr(2, 6);
+async function saveShortUrls(shortUrls) {
+  await KV.put('shortUrls', JSON.stringify(shortUrls));
 }
 
 app.post("/generate-short-url", async (req, res) => {
@@ -213,9 +292,10 @@ app.post("/generate-short-url", async (req, res) => {
     const liveChatId = await getLiveChatId(videoId);
 
     const shortCode = generateShortCode();
+    const shortUrls = await getShortUrls();
     shortUrls[shortCode] = { videoId, address };
 
-    saveShortUrls();
+    await saveShortUrls(shortUrls);
 
     monitorLiveChat(videoId).catch((error) => {
       console.error("Failed to start monitoring:", error);
@@ -231,6 +311,7 @@ app.post("/generate-short-url", async (req, res) => {
 app.get("/s/:shortCode", async (req, res) => {
   const { shortCode } = req.params;
 
+  const shortUrls = await getShortUrls();
   const urlData = shortUrls[shortCode];
 
   if (!urlData) {
@@ -262,6 +343,7 @@ app.get("/s/:shortCode", async (req, res) => {
 app.get("/c/:shortCode", async (req, res) => {
   const { shortCode } = req.params;
 
+  const shortUrls = await getShortUrls();
   const urlData = shortUrls[shortCode];
 
   if (!urlData) {
@@ -293,6 +375,7 @@ app.get("/c/:shortCode", async (req, res) => {
 app.get("/a/:shortCode", async (req, res) => {
   const { shortCode } = req.params;
 
+  const shortUrls = await getShortUrls();
   const urlData = shortUrls[shortCode];
 
   if (!urlData) {
@@ -337,7 +420,9 @@ app.get("/superchat-events", (req, res) => {
   });
 });
 
-app.get("/debug/urls", (req, res) => {
+
+app.get("/debug/urls", async (req, res) => {
+  const shortUrls = await getShortUrls();
   res.json({
     urlCount: Object.keys(shortUrls).length,
     urls: shortUrls,
