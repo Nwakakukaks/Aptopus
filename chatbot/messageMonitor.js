@@ -1,8 +1,14 @@
+const dotenv = require("dotenv");
+dotenv.config();
+
 const { youtube, oauth2Client, getLiveChatId, deleteMessage } = require("./index");
 const { isValidMessage, isSuperchatFormat } = require("./messageValidator");
-const fs = require("fs");
-const path = require("path");
 const EventEmitter = require("events");
+const fetch = require("node-fetch");
+
+const CLOUDFLARE_ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID;
+const CLOUDFLARE_API_TOKEN = process.env.CLOUDFLARE_API_TOKEN;
+const CLOUDFLARE_NAMESPACE_ID = process.env.CLOUDFLARE_NAMESPACE_ID;
 
 // Create an instance of EventEmitter
 const eventEmitter = new EventEmitter();
@@ -11,17 +17,42 @@ const eventEmitter = new EventEmitter();
 const monitoringIntervals = new Map();
 // Store the last checked message ID for each video
 const lastCheckedMessageId = new Map();
-// File path for storing valid superchats
-const validSuperchatsFile = path.join(__dirname, "validSuperchats.json");
 
-// Load valid superchats from file
-let validSuperchats = {};
-try {
-  if (fs.existsSync(validSuperchatsFile)) {
-    validSuperchats = JSON.parse(fs.readFileSync(validSuperchatsFile, "utf8"));
+async function getKVValue(key) {
+  const response = await fetch(
+    `https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/storage/kv/namespaces/${CLOUDFLARE_NAMESPACE_ID}/values/${key}`,
+    {
+      headers: {
+        Authorization: `Bearer ${CLOUDFLARE_API_TOKEN}`,
+      },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
   }
-} catch (error) {
-  console.error("Error loading valid superchats file:", error);
+
+  return response.text();
+}
+
+async function putKVValue(key, value) {
+  const response = await fetch(
+    `https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/storage/kv/namespaces/${CLOUDFLARE_NAMESPACE_ID}/values/${key}`,
+    {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${CLOUDFLARE_API_TOKEN}`,
+        "Content-Type": "text/plain",
+      },
+      body: value,
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  return response.json();
 }
 
 async function monitorLiveChat(videoId) {
@@ -45,7 +76,7 @@ async function monitorLiveChat(videoId) {
 
     console.log(`Starting to monitor live chat for video ${videoId}`);
 
-    // Set up an interval to check for new messages every 10 seconds
+    // Set up an interval to check for new messages every 3 seconds
     const intervalId = setInterval(() => checkLiveChatMessages(videoId, liveChatId), 3000);
     monitoringIntervals.set(videoId, intervalId);
   } catch (error) {
@@ -114,7 +145,6 @@ async function checkLiveChatMessages(videoId, liveChatId) {
 
 function validateAmount(amount) {
   const num = parseFloat(amount);
-
   return !isNaN(num) && num > 0 && num <= 1000;
 }
 
@@ -137,7 +167,9 @@ async function processMessage(message, liveChatId, videoId) {
         console.log("Message is in valid superchat format:", messageText);
 
         // Check if this superchat was previously validated
-        if (validSuperchats[videoId]?.includes(messageId)) {
+        let validSuperchats = await getKVValue(`validSuperchats:${videoId}`);
+        validSuperchats = JSON.parse(validSuperchats || "[]");
+        if (validSuperchats.includes(messageId)) {
           console.log("Previously validated superchat:", messageText);
           return;
         }
@@ -148,16 +180,8 @@ async function processMessage(message, liveChatId, videoId) {
           // Valid superchat with valid amount
           console.log("Valid superchat detected:", messageText);
 
-          if (!validSuperchats[videoId]) {
-            validSuperchats[videoId] = [];
-          }
-          validSuperchats[videoId].push(messageId);
-
-          try {
-            fs.writeFileSync(validSuperchatsFile, JSON.stringify(validSuperchats, null, 2));
-          } catch (error) {
-            console.error("Error saving valid superchats:", error);
-          }
+          validSuperchats.push(messageId);
+          await putKVValue(`validSuperchats:${videoId}`, JSON.stringify(validSuperchats));
 
           console.log("Emitting new superchat event:", { videoId, messageText });
           eventEmitter.emit("newSuperchat", { videoId, messageText });
@@ -187,7 +211,7 @@ function handleError(error, videoId) {
     error.code === 404 ||
     errorResponse?.status === 404 ||
     errorMessage.includes("liveChatNotFound") ||
-    errorMessage.includes("items") // Handle the specific error you're encountering
+    errorMessage.includes("items")
   ) {
     console.log("Live stream ended or chat not accessible. Stopping monitor.");
     stopMonitoring(videoId);

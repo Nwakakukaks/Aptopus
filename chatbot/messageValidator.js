@@ -1,39 +1,80 @@
-const fs = require("fs");
-const path = require("path");
+const dotenv = require("dotenv");
+dotenv.config();
 
-const validMessagesFile = path.join(__dirname, "validMessages.json");
+const fetch = require("node-fetch");
 
-// Load valid messages from file on startup
-let validMessages = new Set();
-if (fs.existsSync(validMessagesFile)) {
-  const validMessagesArray = JSON.parse(fs.readFileSync(validMessagesFile, "utf8"));
-  validMessages = new Set(validMessagesArray);
-}
+const CLOUDFLARE_ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID;
+const CLOUDFLARE_API_TOKEN = process.env.CLOUDFLARE_API_TOKEN;
+const CLOUDFLARE_NAMESPACE_ID = process.env.CLOUDFLARE_NAMESPACE_ID;
 
-function addValidMessage(message) {
-  validMessages.add(message);
-  // Save the updated valid messages to file
-  fs.writeFileSync(validMessagesFile, JSON.stringify(Array.from(validMessages)), "utf8");
-
-  // Remove the message after 10 minutes
-  setTimeout(
-    () => {
-      validMessages.delete(message);
-      // Save the updated valid messages to file
-      fs.writeFileSync(validMessagesFile, JSON.stringify(Array.from(validMessages)), "utf8");
-    },
-    10 * 60 * 1000,
+async function getKVValue(key) {
+  const response = await fetch(
+    `https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/storage/kv/namespaces/${CLOUDFLARE_NAMESPACE_ID}/values/${key}`,
+    {
+      headers: {
+        Authorization: `Bearer ${CLOUDFLARE_API_TOKEN}`,
+      },
+    }
   );
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  return response.text();
 }
 
-function isValidMessage(message) {
-  return validMessages.has(message);
+async function putKVValue(key, value) {
+  const response = await fetch(
+    `https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/storage/kv/namespaces/${CLOUDFLARE_NAMESPACE_ID}/values/${key}`,
+    {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${CLOUDFLARE_API_TOKEN}`,
+        "Content-Type": "text/plain",
+      },
+      body: value,
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  return response.json();
 }
 
-// function isSuperchatFormat(message) {
-//     const regex = /^⚡+ 𝗦𝗨𝗣𝗘𝗥𝗖𝗛𝗔𝗧 \[\d+ APTO\]: .+/;
-//     return regex.test(message);
-// }
+async function addValidMessage(message) {
+  try {
+    let validMessages = await getKVValue("validMessages");
+    validMessages = JSON.parse(validMessages || "[]");
+    validMessages.push(message);
+    await putKVValue("validMessages", JSON.stringify(validMessages));
+
+    // Remove the message after 10 minutes
+    setTimeout(async () => {
+      let updatedValidMessages = await getKVValue("validMessages");
+      updatedValidMessages = JSON.parse(updatedValidMessages || "[]");
+      const index = updatedValidMessages.indexOf(message);
+      if (index > -1) {
+        updatedValidMessages.splice(index, 1);
+        await putKVValue("validMessages", JSON.stringify(updatedValidMessages));
+      }
+    }, 10 * 60 * 1000);
+  } catch (error) {
+    console.error("Error adding valid message:", error);
+  }
+}
+
+async function isValidMessage(message) {
+  try {
+    const validMessages = await getKVValue("validMessages");
+    return JSON.parse(validMessages || "[]").includes(message);
+  } catch (error) {
+    console.error("Error checking valid message:", error);
+    return false;
+  }
+}
 
 const existingMessages = new Set(); // Set to track existing messages
 
@@ -105,6 +146,5 @@ function isSuperchatFormat(message) {
   // Success - message passed all validation checks
   return true;
 }
-
 
 module.exports = { addValidMessage, isValidMessage, isSuperchatFormat };
