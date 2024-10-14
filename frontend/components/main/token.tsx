@@ -244,7 +244,7 @@ const DynamicMint = () => {
   useEffect(() => {}, [tokenHash]);
 
   return (
-    <div className=" rounded-none w-[90%] shadow-md mx-auto border-2 border-gray-600 h-full overflow-y-auto p-4 mb-6">
+    <div className=" rounded-none w-full shadow-md mx-auto border-2 border-gray-600 h-full overflow-y-auto p-4 mb-6">
       {location.pathname === "/dashboard" ? (
         <div className="p-4">
           <div className=" flex flex-col items-center justify-center rounded-sm mt-1">

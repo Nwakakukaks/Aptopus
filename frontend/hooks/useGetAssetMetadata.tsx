@@ -15,16 +15,27 @@ export function useGetAssetMetadata() {
   const [fas, setFAs] = useState<GetFungibleAssetMetadataResponse>([]);
 
   useEffect(() => {
-    // fetch the contract registry address
-    getRegistry().then((registry) => {
-      // fetch fungible assets objects created under that contract registry address
-      getObjects(registry).then((objects) => {
+    async function fetchData() {
+      try {
+        // fetch the contract registry address
+        const registry = await getRegistry();
+        console.log("Registry:", registry);
+
+        // fetch fungible assets objects created under that contract registry address
+        const objects = await getObjects(registry);
+        console.log("Objects:", objects);
+
         // get each fungible asset object metadata
-        getMetadata(objects).then((metadatas) => {
-          setFAs(metadatas);
-        });
-      });
-    });
+        const metadatas = await getMetadata(objects);
+        console.log("Metadatas:", metadatas);
+
+        // Set the fetched metadatas to the state
+        setFAs(metadatas);
+      } catch (error) {
+        console.error("Error fetching asset metadata:", error);
+      }
+    }
+    fetchData();
   }, []);
 
   return fas;
