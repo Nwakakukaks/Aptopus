@@ -11,7 +11,7 @@ const RedirectToClaim: React.FC = () => {
       const pathParts = window.location.pathname.split("/");
       const shortCode = pathParts[pathParts.length - 1];
 
-      const response = await fetch(`/api/c/${shortCode}`);
+      const response = await fetch(`https://aptopus.vercel.app//c/${shortCode}`);
       if (!response.ok) {
         const text = await response.text();
         throw new Error(text);

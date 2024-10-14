@@ -202,7 +202,7 @@ const DynamicMint = () => {
   const generateAccessUrl = async () => {
     if (videoId && address) {
       try {
-        const response = await fetch("/api/generate-short-url", {
+        const response = await fetch("https://aptopus.vercel.app//generate-short-url", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

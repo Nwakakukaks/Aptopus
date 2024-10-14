@@ -23,7 +23,7 @@ const Payment: React.FC = () => {
       setLoading(true);
 
       try {
-        const response = await fetch("/api/send-message", {
+        const response = await fetch("https://aptopus.vercel.app//send-message", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -85,7 +85,7 @@ const Payment: React.FC = () => {
 
         const hash = executedTransaction.hash;
         // Simulate the payment
-        const response = await fetch("/api/simulate-payment", {
+        const response = await fetch("https://aptopus.vercel.app//simulate-payment", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -122,7 +122,7 @@ const Payment: React.FC = () => {
   const generateClaimUrl = async () => {
     if (videoId && address) {
       try {
-        const response = await fetch("/api/generate-short-url", {
+        const response = await fetch("https://aptopus.vercel.app//generate-short-url", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
