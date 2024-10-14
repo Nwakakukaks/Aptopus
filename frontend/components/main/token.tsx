@@ -185,7 +185,7 @@ const DynamicMint = () => {
         assetType: asset.asset_type,
         amount,
         decimals: asset.decimals,
-        address: account ? account.address : "0x",
+        // address: account ? account.address : "0x",
       }),
     );
 
