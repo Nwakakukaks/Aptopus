@@ -13,7 +13,7 @@ const Live: React.FC = () => {
     }
 
     // EventSource to listen for live data updates
-    const eventSource = new EventSource('https://aptopus-backend.vercel.app/superchat-events');
+    const eventSource = new EventSource('https://aptopus.vercel.app//superchat-events');
     eventSource.onmessage = function(event) {
       const data = JSON.parse(event.data);
       setDataDisplay(prevData => [
@@ -53,9 +53,11 @@ const Live: React.FC = () => {
     if (videoId) {
       setLoading(true);
       try {
-        const response = await fetch("https://aptopus-backend.vercel.app/start-monitoring", {
+        const response = await fetch("https://aptopus.vercel.app//start-monitoring", {
           method: "POST",
-         
+          headers: {
+            "Content-Type": "application/json",
+          },
           body: JSON.stringify({ videoId }),
         });
         const data = await response.json();
