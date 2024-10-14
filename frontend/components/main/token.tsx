@@ -289,7 +289,7 @@ const DynamicMint = () => {
                   value={formData.name}
                   onChange={handleInputChange}
                   placeholder="Enter token name"
-                  className="text-gray-800 bg-transparent rounded-sm mt-1"
+                  className="text-gray-200 bg-transparent rounded-sm mt-1"
                 />
               </div>
               <div>
@@ -302,7 +302,7 @@ const DynamicMint = () => {
                   value={formData.symbol}
                   onChange={handleInputChange}
                   placeholder="Enter token symbol"
-                  className="text-gray-800 bg-transparent rounded-sm mt-1"
+                  className="text-gray-200 bg-transparent rounded-sm mt-1"
                 />
               </div>
             </div>
@@ -318,7 +318,7 @@ const DynamicMint = () => {
                 value={formData.decimals}
                 onChange={handleInputChange}
                 placeholder="Enter number of decimal places"
-                className="text-gray-800 bg-transparent rounded-sm mt-1"
+                className="text-gray-200 bg-transparent rounded-sm mt-1"
               />
             </div>
 
@@ -382,7 +382,7 @@ const DynamicMint = () => {
                       value={formData.mint_limit_per_addr}
                       onChange={handleInputChange}
                       placeholder="Mint limit per address"
-                      className="text-gray-800 bg-transparent rounded-sm mt-1"
+                      className="text-gray-200 bg-transparent rounded-sm mt-1"
                     />
                   </div>
                   <div>
@@ -396,7 +396,7 @@ const DynamicMint = () => {
                       value={formData.max_supply}
                       onChange={handleInputChange}
                       placeholder="Enter max supply (optional)"
-                      className="text-gray-800 bg-transparent rounded-sm mt-1"
+                      className="text-gray-200 bg-transparent rounded-sm mt-1"
                     />
                   </div>
                 </div>
@@ -446,7 +446,7 @@ const DynamicMint = () => {
             <div className="flex space-x-3 items-center text-start justify-between">
               <div>
                 <p className="font-medium text-sm text-gray-400">Claimable Token</p>
-                <p className="text-base font-bold text-gray-100 ">
+                <p className="text-base font-semibold text-gray-100 ">
                   {Math.min(userMintBalance, maxSupply - currentSupply)}
                   <span className=" font-medium text-gray-200 ml-1">{asset?.symbol}</span>
                 </p>
@@ -455,7 +455,7 @@ const DynamicMint = () => {
 
               <div>
                 <p className="font-medium text-sm text-gray-400">Your Balance</p>
-                <p className="text-base font-bold text-gray-100 ">
+                <p className="text-base font-semibold text-gray-100 ">
                   {yourBalance}
                   <span className=" font-medium text-gray-200 ml-1">{asset?.symbol}</span>
                 </p>
@@ -464,7 +464,7 @@ const DynamicMint = () => {
 
               <div>
                 <p className="font-medium text-sm text-gray-400">Total Supply</p>
-                <p className="text-base font-bold text-gray-100 ">
+                <p className="text-base font-semibold text-gray-100 ">
                   {currentSupply} / {maxSupply}
                 </p>
                 <p className="text-xs text-gray-400">Claimed / Max Supply</p>
