@@ -55,9 +55,7 @@ const Live: React.FC = () => {
       try {
         const response = await fetch("https://aptopus-backend.vercel.app/start-monitoring", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+         
           body: JSON.stringify({ videoId }),
         });
         const data = await response.json();
