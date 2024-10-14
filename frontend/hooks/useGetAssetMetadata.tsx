@@ -19,15 +19,15 @@ export function useGetAssetMetadata(address: string) {
       try {
         // fetch the contract registry address
         const registry = await getRegistry({address: address});
-        console.log("Registry:", registry);
+        // console.log("Registry:", registry);
 
         // fetch fungible assets objects created under that contract registry address
         const objects = await getObjects(registry);
-        console.log("Objects:", objects);
+        // console.log("Objects:", objects);
 
         // get each fungible asset object metadata
         const metadatas = await getMetadata(objects);
-        console.log("Metadatas:", metadatas);
+        // console.log("Metadatas:", metadatas);
 
         // Set the fetched metadatas to the state
         setFAs(metadatas);
