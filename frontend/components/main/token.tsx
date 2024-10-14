@@ -508,7 +508,7 @@ const DynamicMint = () => {
                 <div className="bg-white text-gray-900 rounded-md p-2 mt-4">
                   <p className="text-sm text-wrap ">
                     Hurray! Unlock creators exclusive contents here:{" "}
-                    <a href={generatedUrl} className="text-red-500">
+                    <a href={generatedUrl} className="text-red-500 text-xs">
                       {generatedUrl}
                     </a>
                   </p>

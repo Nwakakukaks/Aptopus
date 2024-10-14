@@ -3,7 +3,7 @@ import { useGetAssetData } from "@/hooks/useGetAssetData";
 import { useGetAssetMetadata } from "@/hooks/useGetAssetMetadata";
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import { toast } from "@/components/ui/use-toast";
-import { getTokenBalance } from "@/view-functions/getTokenBalance";
+import { getMintLimit, getTokenBalance } from "@/view-functions/getTokenBalance";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -97,9 +97,13 @@ const Access: React.FC = () => {
         }
 
         const balance = await getTokenBalance({
-          accountAddress: account.address,
           fa_obj: asset.asset_type,
+          accountAddress: account.address,
         });
+
+        // const limit = await getMintLimit({
+        //   fa_obj: asset.asset_type,
+        // });
 
         return { balance };
       } catch (error) {
@@ -120,7 +124,7 @@ const Access: React.FC = () => {
       if (signedPlatform && balanceData) {
         const tokenBalance = balanceData.balance / Math.pow(10, 8);
 
-        if (tokenBalance >= signedPlatform.requiredBalance) {
+        if (tokenBalance < signedPlatform.requiredBalance) {
           const passkey = generateRandomString(signedPlatform.name);
           toast({
             title: "Access Granted",
@@ -130,7 +134,7 @@ const Access: React.FC = () => {
           toast({
             variant: "destructive",
             title: "Access Denied",
-            description: `You need at least ${signedPlatform.requiredBalance} creator token to access ${signedPlatform.name} contents.`,
+            description: `You need to have creator membership token to access ${signedPlatform.name} contents.`,
           });
         }
 
@@ -143,7 +147,7 @@ const Access: React.FC = () => {
   }, [balanceData, signedPlatform]);
 
   const handleAccess = async (platform: Platform) => {
-    const message = "Search wallet holdings for creator token";
+    const message = "Search wallet Holdings For Creator Token";
 
     setLoadingStates((prev) => ({ ...prev, [platform.name]: "accessing" }));
 
@@ -172,12 +176,12 @@ const Access: React.FC = () => {
           <WalletSelector />
         </div>
       ) : (
-        <Card className="w-full max-w-4xl mx-auto bg-transparent border-2 border-gray-400 ">
+        <Card className="w-full max-w-4xl mx-auto bg-transparent border-2 border-gray-400 my-12">
           <CardHeader>
-            <CardTitle className="text-2xl text-slate-50 font-bold text-center mb-2">
+            <CardTitle className="text-xl text-slate-50 font-bold text-center mb-2">
               Access Exclusive Contents
             </CardTitle>
-            <CardDescription className="text-center text-base ">
+            <CardDescription className="text-center text-sm ">
               Connect your wallet to unlock premium content using your membership token
             </CardDescription>
           </CardHeader>
