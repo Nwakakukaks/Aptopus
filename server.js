@@ -17,9 +17,16 @@ const port = process.env.PORT || 3001;
 
 app.use(express.json()); 
 
+
 app.use(cors({
-  origin: 'https://aptopus.vercel.app' 
+  origin: 'https://aptopus.vercel.app',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['X-CSRF-Token', 'X-Requested-With', 'Accept', 'Accept-Version', 'Content-Length', 'Content-MD5', 'Content-Type', 'Date', 'X-Api-Version'],
+  credentials: true
 }));
+
+// Handle preflight requests
+app.options('*', cors());
 
 const youtube = google.youtube("v3");
 const oauth2Client = new google.auth.OAuth2(
