@@ -116,7 +116,7 @@ const Payment: React.FC = () => {
 
   const showSuccessMessage = async () => {
     await generateClaimUrl();
-    setSuccessMessage(`Your Superchat has been posted to YouTube.\nMessage: ${message}\nAmount: ${amount} APTO`);
+    setSuccessMessage(`Your Superchat has been posted ⚡⚡`);
   };
 
   const generateClaimUrl = async () => {
@@ -158,7 +158,7 @@ const Payment: React.FC = () => {
   };
 
   return (
-    <div className="flex justify-center items-center mx-auto h-[75vh]">
+    <div className="flex flex-col gap-3 justify-center items-center mx-auto h-[75vh]">
       <div className={`bg-white rounded-lg shadow-md px-6 py-12 w-[85%]`}>
         <h1 className="text-2xl text-red-600">Aptopus 🐙</h1>
         <Input
@@ -189,14 +189,11 @@ const Payment: React.FC = () => {
       </div>
 
       {successMessage && (
-        <div className="bg-white text-gray-900 rounded-md p-2 mt-4">
-          <h2 className="text-lg font-bold">Payment Successful!</h2>
+        <div className="bg-white text-gray-900 rounded-md p-2 mt-1">
+          <h2 className="text-lg font-semibold">Payment Successful!</h2>
           <p className="text-sm">{successMessage}</p>
-          <p className="text-sm">
-            Claim your reward token here: <a className="text-red-500">{generatedUrl}</a>
-          </p>
-          <p className="text-sm">
-            Claim your reward token here: <a className="text-red-500">{generatedUrl}</a>
+          <p className="text-xs mt-2">
+            Claim your token here: <a href={generatedUrl} className="text-red-500">{generatedUrl}</a>
           </p>
         </div>
       )}
