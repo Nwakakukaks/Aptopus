@@ -1,7 +1,7 @@
 const dotenv = require("dotenv");
 dotenv.config();
 
-const { KVNamespace } = require('@cloudflare/workers-types');
+const fetch = require('node-fetch');
 const express = require("express");
 const bodyParser = require("body-parser");
 const axios = require("axios");
@@ -272,16 +272,57 @@ app.get("/test-youtube-api/:videoId", async (req, res) => {
 //   }
 // });
 
-// Initialize Cloudflare KV
-const KV = new KVNamespace('9e80bc6191f545b5bc67096ae361f275');
+const CLOUDFLARE_ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID;
+const CLOUDFLARE_API_TOKEN = process.env.CLOUDFLARE_API_TOKEN;
+const CLOUDFLARE_NAMESPACE_ID = process.env.CLOUDFLARE_NAMESPACE_ID;
 
-// Replace the file-based shortUrls with KV operations
+async function getKVValue(key) {
+  const response = await fetch(`https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/storage/kv/namespaces/${CLOUDFLARE_NAMESPACE_ID}/values/${key}`, {
+    headers: {
+      'Authorization': `Bearer ${CLOUDFLARE_API_TOKEN}`,
+    },
+  });
+  
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+  
+  return response.text();
+}
+
+async function putKVValue(key, value) {
+  const response = await fetch(`https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/storage/kv/namespaces/${CLOUDFLARE_NAMESPACE_ID}/values/${key}`, {
+    method: 'PUT',
+    headers: {
+      'Authorization': `Bearer ${CLOUDFLARE_API_TOKEN}`,
+      'Content-Type': 'text/plain',
+    },
+    body: value,
+  });
+  
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+  
+  return response.json();
+}
+
 async function getShortUrls() {
-  return JSON.parse(await KV.get('shortUrls') || '{}');
+  try {
+    const data = await getKVValue('shortUrls');
+    return JSON.parse(data || '{}');
+  } catch (error) {
+    console.error('Error fetching short URLs:', error);
+    return {};
+  }
 }
 
 async function saveShortUrls(shortUrls) {
-  await KV.put('shortUrls', JSON.stringify(shortUrls));
+  try {
+    await putKVValue('shortUrls', JSON.stringify(shortUrls));
+  } catch (error) {
+    console.error('Error saving short URLs:', error);
+  }
 }
 
 app.post("/generate-short-url", async (req, res) => {
