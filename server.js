@@ -25,6 +25,7 @@ app.use(express.json());
 app.use(
   cors({
     origin: "https://aptopus.vercel.app",
+    origin: "https://superbased.vercel.app",
   }),
 );
 
