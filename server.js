@@ -22,11 +22,21 @@ const CLOUDFLARE_NAMESPACE_ID = process.env.CLOUDFLARE_NAMESPACE_ID;
 
 app.use(express.json());
 
+const allowedOrigins = [
+  "https://aptopus.vercel.app",
+  "https://superbased.vercel.app",
+];
+
 app.use(
   cors({
-    origin: "https://aptopus.vercel.app",
-    origin: "https://superbased.vercel.app",
-  }),
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, origin);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+  })
 );
 
 const youtube = google.youtube("v3");
